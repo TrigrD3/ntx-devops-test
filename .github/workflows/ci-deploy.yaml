@@ -10,6 +10,11 @@ jobs:
   build-node-app:
     runs-on: self-hosted
     steps:
+
+      - name: Clean repository
+        run: |
+          git gc --prune=now
+          git remote prune origin
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -33,6 +38,10 @@ jobs:
     needs:
       - build-node-app
     steps:
+      - name: Clean repository
+        run: |
+          git gc --prune=now
+          git remote prune origin
       - name: Checkout repository
         uses: actions/checkout@v3
 
