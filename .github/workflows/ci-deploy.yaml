@@ -32,6 +32,7 @@ jobs:
     runs-on: self-hosted
     needs:
       - build-node-app
+    if: github.event_name == 'push' && (github.event.head_commit.changed_files == 1) && (github.event.head_commit.modified_files == 'Dockerfile.nginx' || github.event.head_commit.modified_files == 'nginx.conf')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -53,7 +54,7 @@ jobs:
       - build-nginx
     steps:
       - name: Set up kubectl
-        uses: actions/setup-kubectl@v3
+        uses: azure/setup-kubectl@v3
         with:
           kubectl-version: 'v1.31.0'  # Ensure this matches your environment
 
