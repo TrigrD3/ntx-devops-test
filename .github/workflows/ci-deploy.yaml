@@ -73,3 +73,4 @@ jobs:
         run: |
           kubectl rollout status deployment/node-app  # Check the status of the node-app deployment
           kubectl get pods  # List pods to ensure deployment is successful
+
