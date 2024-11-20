@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/*
+      - /^feature-.*$/
 
 jobs:
   build-node-app:
@@ -32,7 +32,6 @@ jobs:
     runs-on: self-hosted
     needs:
       - build-node-app
-    if: github.event_name == 'push' && (github.event.head_commit.changed_files == 1) && (github.event.head_commit.modified_files == 'Dockerfile.nginx' || github.event.head_commit.modified_files == 'nginx.conf')
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -49,6 +48,9 @@ jobs:
 
   deploy:
     runs-on: self-hosted
+    needs: 
+      - build-node-app
+      - build-nginx
     steps:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
