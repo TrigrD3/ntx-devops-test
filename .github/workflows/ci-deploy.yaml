@@ -49,9 +49,6 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-    needs: 
-      - build-node-app
-      - build-nginx
     steps:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
