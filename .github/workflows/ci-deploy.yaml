@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 
 
       # Build the Node.js Docker image
       - name: Build Node.js Docker image
@@ -37,8 +35,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 
 
       # Build the Nginx Docker image
       - name: Build Nginx Docker image
