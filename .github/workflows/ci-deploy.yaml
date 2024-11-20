@@ -55,7 +55,9 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-    needs: build
+    needs: 
+      - build-node-app
+      - build-nginx 
     steps:
       - name: Set up kubectl
         uses: actions/setup-kubectl@v3
