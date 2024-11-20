@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature-develop
+      - feature-*
 
 jobs:
   build-node-app:
