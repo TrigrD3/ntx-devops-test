@@ -16,23 +16,20 @@ jobs:
       # Build the Node.js Docker image
       - name: Build Node.js Docker image
         run: |
-          docker build -f Dockerfile.node-app -t trigrd/custom-node-app:latest .
+          docker build -f ../Dockerfile.node-app -t trigrd/custom-node-app:latest .
+
+      # Non-interactive Docker login
+      - name: Login to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
       # Push the Node.js Docker image to DockerHub (or your registry)
       - name: Push Node.js Docker image
         run: |
-          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker push trigrd/custom-node-app:latest
-
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: ./build
 
   build-nginx:
     runs-on: self-hosted
-    needs: build-node-app  # Ensure this job runs after the build-node-app job
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -42,17 +39,21 @@ jobs:
         run: |
           docker build -f Dockerfile.nginx -t trigrd/custom-nginx:latest .
 
+      # Non-interactive Docker login
+      - name: Login to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
       # Push the Nginx Docker image to DockerHub (or your registry)
       - name: Push Nginx Docker image
         run: |
-          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
           docker push trigrd/custom-nginx:latest
 
   deploy:
     runs-on: self-hosted
     needs: 
       - build-node-app
-      - build-nginx 
+      - build-nginx
     steps:
       - name: Set up kubectl
         uses: actions/setup-kubectl@v3
