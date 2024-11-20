@@ -23,14 +23,14 @@ jobs:
         run: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
-      # Push the Node.js Docker image to DockerHub (or your registry)
+      # Push the Node.js Docker image to DockerHub
       - name: Push Node.js Docker image
         run: |
           docker push trigrd/custom-node-app:latest
 
   build-nginx:
     runs-on: self-hosted
-    needs: 
+    needs:
       - build-node-app
     steps:
       - name: Checkout repository
@@ -41,12 +41,7 @@ jobs:
         run: |
           docker build -f Dockerfile.nginx -t trigrd/custom-nginx:latest .
 
-      # Non-interactive Docker login
-      - name: Login to Docker Hub
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-      # Push the Nginx Docker image to DockerHub (or your registry)
+      # Reuse Docker login from previous step
       - name: Push Nginx Docker image
         run: |
           docker push trigrd/custom-nginx:latest
@@ -60,11 +55,11 @@ jobs:
       - name: Set up kubectl
         uses: actions/setup-kubectl@v3
         with:
-          kubectl-version: 'v1.31.0'  # Use the appropriate version for your environment
-      
+          kubectl-version: 'v1.31.0'  # Ensure this matches your environment
+
       - name: Configure kubectl to use docker-desktop context
         run: |
-          kubectl config use-context docker-desktop  # This switches kubectl to use the 'docker-desktop' context
+          kubectl config use-context docker-desktop
 
       - name: Apply Kubernetes manifests
         run: |
