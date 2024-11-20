@@ -16,7 +16,7 @@ jobs:
       # Build the Node.js Docker image
       - name: Build Node.js Docker image
         run: |
-          docker build -f ../Dockerfile.node-app -t trigrd/custom-node-app:latest .
+          docker build -f Dockerfile.node-app -t trigrd/custom-node-app:latest .
 
       # Non-interactive Docker login
       - name: Login to Docker Hub
