@@ -2,7 +2,7 @@ const os = require('os');
 const http = require('http');
 
 function handleRequest(req, res) {
-  res.write(`Hi there! I'm being served from ${os.hostname()} main branch`);
+  res.write(`Hi there! I'm being served from ${os.hostname()} feature branch`);
   res.end();
 }
 
