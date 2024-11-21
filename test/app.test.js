@@ -12,7 +12,7 @@ describe('Node.js Application Tests', () => {
       .expect(200)
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.text).to.equal(`Hi there! I'm being served from ${hostname} feature branch`);
+        expect(res.text).to.equal(`Hi there! I'm being served from ${hostname} main branch`);
         done();
       });
   });
@@ -32,7 +32,7 @@ describe('Node.js Application Tests', () => {
     handleRequest(mockRequest, mockResponse);
 
     const hostname = os.hostname();
-    expect(mockResponse.body).to.equal(`Hi there! I'm being served from ${hostname} feature branch`);
+    expect(mockResponse.body).to.equal(`Hi there! I'm being served from ${hostname} main branch`);
     expect(mockResponse.finished).to.be.true;
     done();
   });
