@@ -13,15 +13,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Build the Node.js Docker image
-      - name: Build Node.js Docker image
-        run: |
-          docker build -f Dockerfile.node-app -t trigrd/custom-node-app:latest .
-
       # Non-interactive Docker login
       - name: Login to Docker Hub
         run: |
           echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      # Build the Node.js Docker image
+      - name: Build Node.js Docker image
+        run: |
+          docker build -f Dockerfile.node-app -t trigrd/custom-node-app:latest .
 
       # Push the Node.js Docker image to DockerHub
       - name: Push Node.js Docker image
