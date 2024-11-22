@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  node-app:
+    image: trigrd/custom-node-app:latest
+    container_name: node-app
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  nginx:
+    image: trigrd/custom-nginx-compose:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - node-app
+    networks:
+      - app-network
+
+  node-app2:
+    image: trigrd/custom-node-app:latest
+    container_name: node-app2
+    ports:
+      - "3001:3000" 
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -46,11 +46,30 @@ jobs:
         run: |
           docker push trigrd/custom-nginx:latest
 
+  build-nginx-compose:
+    runs-on: self-hosted
+    needs:
+      - build-nginx
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Build the Nginx Docker image
+      - name: Build Nginx Docker image
+        run: |
+          docker build -f nginx/Dockerfile.nginx-compose -t trigrd/custom-nginx-compose:latest .
+
+      # Reuse Docker login from previous step
+      - name: Push Nginx Docker image
+        run: |
+          docker push trigrd/custom-nginx-compose:latest
+
   deploy:
     runs-on: self-hosted
     needs: 
       - build-node-app
       - build-nginx
+      - build-nginx-compose
     steps:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
