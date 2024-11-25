@@ -1,105 +1,90 @@
 # DevOps Engineer - Technical Test
 
-Welcome to the DevOps Engineer Technical Test! This exercise assesses your ability to create automated infrastructure and CI/CD pipelines while adhering to modern DevOps methodologies.
+## CI/CD Pipelines
+
+### Overview
+
+This repository includes **two CI pipelines** defined in **GitHub Actions**:
+
+1. **Development Pipeline (`ci-deploy-dev.yaml`)**  
+   This pipeline builds, pushes, and deploys the application to a development environment.
+   - **Job 1: `build-node-app`**
+     - Builds the Node.js Docker image (`latest` tag).
+     - Pushes the image to DockerHub.
+   - **Job 2: `build-nginx`**
+     - Builds the NGINX Docker image for development (`dev` tag).
+     - Pushes the image to DockerHub.
+   - **Job 3: `build-nginx-compose`**
+     - Builds the NGINX Docker image for Docker Compose (`latest` tag).
+     - Pushes the image to DockerHub.
+   - **Job 4: `deploy`**
+     - Configures `kubectl` to use the Docker Desktop context.
+     - Applies the Kubernetes deployment manifest (`kubernetes/deployment-dev.yaml`).
+     - Restarts the deployments to pick up new changes and verify successful rollout.
+
+2. **Production Pipeline (`ci-deploy-prod.yaml`)**  
+   This pipeline performs similar steps as the development pipeline but uses production-specific configurations.
 
 ---
 
-## Objective
+## Deployment Options
 
-Your task is to create a CI build pipeline that deploys this Node.js web application to a load-balanced environment. You can complete this test locally using tools like Docker or on a cloud provider of your choice. If using a cloud provider, we recommend using a free-tier account to avoid costs.
+The application can be deployed using either **Docker Compose** or **Kubernetes deployments**.
 
----
+### 1. **Docker Compose**
+   - The `docker-compose.yaml` file orchestrates the application along with the NGINX load balancer.
+   - To run the application using Docker Compose:
+     ```bash
+     docker compose up --build
+     ```
+   - NGINX will load balance requests across the application instances, which can be accessed on port `80`.
 
-## Requirements
-
-### CI Build Pipeline
-
-1. **Trigger Mechanism**:  
-   - The CI job should trigger automatically when a feature branch is pushed to GitHub.  
-   - If working locally, implement an alternative method to trigger the pipeline.
-
-2. **Deployment Workflow**:  
-   - The CI pipeline should deploy the application to the target environment after a successful build.
-
----
-
-### Target Environment
-
-The environment must meet the following specifications:
-
-1. **Load Balancer**:
-   - Accessible via HTTP on port 80.
-   - Configured to use a **round-robin** strategy to distribute traffic between application servers.
-
-2. **Application Servers**:
-   - Two instances running this web application.
-   - Each accessible via HTTP on port 3000.
-   - The application must respond with:  
-     `Hi there! I'm being served from {hostname}!`
-
----
-
-## Tools and Technologies
-
-You are free to use any tools and services to implement your solution. Feel free to tailor what you need Below are some options:
-
-- **CI Services**: GitHub Actions, Jenkins, GitLab CI/CD, CircleCI
-- **Provisioning Tools**: Terraform, Ansible, CloudFormation
-- **Local Environment**: Docker, Vagrant, Minikube
-- **Cloud Providers**: AWS, Azure, GCP
-- **Load Balancers**: NGINX, HAProxy, Cloud-native load balancers
-- **Version Control**: GitHub (fork this repository)
-
----
-
-## Submission Instructions
-
-1. Fork this repository to your GitHub account.
-2. Implement the solution, ensuring to:
-   - Commit frequently to demonstrate your development process.
-   - Include a clear and structured project layout.
-3. Push your final solution to your public repository.
-4. Write your Solution and Execution Plan on .md file
-4. Send us the URL to your repository for review.
-
----
-
-## Evaluation Criteria
-
-We will evaluate your submission based on the following:
-
-1. **Functionality**: Does the environment meet the requirements (load balancer, two app servers, correct response)?
-2. **Automation**: Is the infrastructure fully automated and deployable using IaC and CI/CD pipelines?
-3. **Code Quality**: Is the code readable, modular, and maintainable?
-4. **DevOps Practices**: Does the solution adhere to DevOps principles such as scalability and fault tolerance?
+### 2. **Kubernetes Deployments**
+   - The `kubernetes/` directory contains the manifests for deploying the application in a Kubernetes cluster.
+   - You can apply the deployment manifests using:
+     ```bash
+     kubectl apply -f kubernetes/deployment-dev.yaml  # For development
+     kubectl apply -f kubernetes/deployment-prod.yaml # For production
+     ```
+   - The Kubernetes configuration creates a deployment with the Node.js application and NGINX as the reverse proxy.
 
 ---
 
 ## Running the Web Application
 
-This is a Node.js application. Use the following commands to run it locally:
+### 1. **Kubernetes Deployment**
+   After deployment with Kubernetes, the application will respond with:
+   
+   Hi there! I’m being served from {hostname}!
 
-- **Run Tests**:  
-  ```bash
-  npm test
-  ```
-- **Start the HTTP Server**:  
-  ```bash
-  npm start
-  ```
+   - You can verify this response by using `curl` or visiting the endpoint in a browser.
+     ```bash
+     http://localhost:8080/  # For development(feature-*)   
+     http://localhost:80/  # For production(main)
+     ```
+
+### 2. **Docker Compose Deployment**
+   After deployment with Docker Compose, the application will also respond with:
+   
+   Hi there! I’m being served from {hostname}!
+
+   - In this case, you can verify the response by accessing the application on:
+     ```bash
+     http://localhost:80/  # For both development and production (as Docker Compose uses a single port)
+     ```
+---
+
+## Tools and Technologies Used
+
+- **CI/CD Pipelines**: GitHub Actions for automating build, push, and deploy processes.
+- **Containerization**: Docker for containerizing the Node.js application and NGINX.
+- **Orchestration**: Docker Compose, Kubernetes for application deployment and management.
+- **Self-Hosted Runners**: GitHub Actions self-hosted runners are used to execute the pipeline jobs.
 
 ---
 
 ## Notes
 
-- Be sure to document your solution thoroughly, including:
-  - How to deploy the environment.
-  - Explanation of tools and services used.
-  - Assumptions and challenges encountered during implementation.
-- You are encouraged to showcase additional skills or optimizations (e.g., scaling, monitoring, or securing the application).
-
-Good luck, and happy coding! 🚀
-
---- 
-
-Let me know if you need further information.
+- The **CI pipelines** are triggered automatically on pushes to branches with the prefix `feature-*` or to `main`.
+- Each pipeline builds and pushes Docker images for the Node.js app and NGINX (with different tags for development and production).
+- Kubernetes deployments can be managed using `kubectl` commands for both environments.
